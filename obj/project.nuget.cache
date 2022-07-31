@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "XjLQlqZEP7lIfCzaLXpd/8OKwcllHx33Vx0b6ywSLPPCmSph/w0obc+Gk1+OGpFbopC8v/EHc6o5e7TeAkW0Vw==",
+  "success": true,
+  "projectFilePath": "C:\\programming\\c#\\pszeudo_random_base\\pszeudo_random_base.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ligvi\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

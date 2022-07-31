@@ -1,0 +1,12 @@
+C:\programming\c#\pszeudo_random_base\bin\Debug\net6.0\pszeudo_random_base.deps.json
+C:\programming\c#\pszeudo_random_base\bin\Debug\net6.0\pszeudo_random_base.dll
+C:\programming\c#\pszeudo_random_base\bin\Debug\net6.0\pszeudo_random_base.pdb
+C:\programming\c#\pszeudo_random_base\obj\Debug\net6.0\pszeudo_random_base.csproj.AssemblyReference.cache
+C:\programming\c#\pszeudo_random_base\obj\Debug\net6.0\pszeudo_random_base.GeneratedMSBuildEditorConfig.editorconfig
+C:\programming\c#\pszeudo_random_base\obj\Debug\net6.0\pszeudo_random_base.AssemblyInfoInputs.cache
+C:\programming\c#\pszeudo_random_base\obj\Debug\net6.0\pszeudo_random_base.AssemblyInfo.cs
+C:\programming\c#\pszeudo_random_base\obj\Debug\net6.0\pszeudo_random_base.csproj.CoreCompileInputs.cache
+C:\programming\c#\pszeudo_random_base\obj\Debug\net6.0\pszeudo_random_base.dll
+C:\programming\c#\pszeudo_random_base\obj\Debug\net6.0\refint\pszeudo_random_base.dll
+C:\programming\c#\pszeudo_random_base\obj\Debug\net6.0\pszeudo_random_base.pdb
+C:\programming\c#\pszeudo_random_base\obj\Debug\net6.0\ref\pszeudo_random_base.dll
