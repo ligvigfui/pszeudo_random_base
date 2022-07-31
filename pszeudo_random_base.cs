@@ -6,7 +6,7 @@ namespace pszeudo_random_base;
 public abstract class Container : Data_logic{
     [JsonProperty]
     List<Data_logic> list_data_Logic = new List<Data_logic>();
-    protected internal int contained_data_probability_sum;
+    public int contained_data_probability_sum;
     public Container(params Data_logic[] data_logic){
         foreach (Data_logic data in data_logic) {
             this.list_data_Logic.Add(data);
@@ -38,11 +38,11 @@ public abstract class Container : Data_logic{
 }
 public abstract class Data_logic{
     [JsonProperty]
-    protected internal List<Trait> traits = new List<Trait>();
-    protected internal int probability, added_probability;
+    public List<Trait> traits = new List<Trait>();
+    public int probability, added_probability;
     [JsonProperty]
-    protected internal static List<Data_logic> list_of_items = new List<Data_logic>();
-    protected internal virtual void calculate_probablility(){
+    public static List<Data_logic> list_of_items = new List<Data_logic>();
+    public virtual void calculate_probablility(){
         probability =0;
         foreach (Trait trait in traits){
             probability += trait.probability();
@@ -172,14 +172,14 @@ public abstract class Data_logic{
 }
 public class Default_Trait : Trait{
     [JsonProperty]
-    protected internal static Dictionary<int, int> dictionary = new Dictionary<int, int>();
-    protected internal override string trait_name => "Default_Trait";
-    override protected internal void fill_dictionary(){
+    public static Dictionary<int, int> dictionary = new Dictionary<int, int>();
+    public override string trait_name => "Default_Trait";
+    override public void fill_dictionary(){
         for (int i =0; i<6; i++){
             dictionary.Add(i, (int)Math.Pow(3, i));
         }
     }
-    override protected internal int probability(){
+    override public int probability(){
         if (linear_probability<0) return dictionary[0];
         if (linear_probability>5) return dictionary[5];
         try {
@@ -204,8 +204,8 @@ public class DictionaryNotFilledException : System.Exception
 }
 public abstract class Trait{
     [JsonProperty]
-    protected internal int linear_probability;
-    abstract protected internal string trait_name{get;}
-    virtual protected internal void fill_dictionary(){}
-    abstract protected internal int probability();
+    public int linear_probability;
+    abstract public string trait_name{get;}
+    virtual public void fill_dictionary(){}
+    abstract public int probability();
 }
