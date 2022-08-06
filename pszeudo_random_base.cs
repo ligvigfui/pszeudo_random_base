@@ -38,7 +38,7 @@ public abstract class Container : Data_logic{
 }
 public abstract class Data_logic{
     [JsonProperty]
-    public List<Trait> traits = new List<Trait>();
+    public List<Trait> traits = new List<Trait>{new Default_Trait()};
     public int probability, added_probability;
     [JsonProperty]
     public static List<Data_logic> list_of_items = new List<Data_logic>();
@@ -49,7 +49,6 @@ public abstract class Data_logic{
         }
     }
     public Data_logic(){
-        this.traits.Add(new Default_Trait());
         this.calculate_probablility();
         list_of_items.Add(this);
     }
