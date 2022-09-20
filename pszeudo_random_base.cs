@@ -3,27 +3,21 @@ using Newtonsoft.Json;
 namespace pszeudo_random_base;
 
 
-public abstract class Container : Data_logic{
+public sealed class DLContainer : Data_logic{
     [JsonProperty]
-    List<Data_logic> list_data_Logic = new List<Data_logic>();
-    public int contained_data_probability_sum;
-    public Container(params Data_logic[] data_logic){
+    public List<Data_logic> list_data_Logic = new List<Data_logic>();
+    public DLContainer(params Data_logic[] data_logic){
+        this.calculate_probability = update_container;
+        this.probability = 0;
         foreach (Data_logic data in data_logic) {
             this.list_data_Logic.Add(data);
-            this.contained_data_probability_sum += data.probability;
+            this.probability += data.probability;
         }
     }
-    public void easier_constructor(params Data_logic[] data_logic){
-        foreach (Data_logic data in data_logic) {
-            this.list_data_Logic.Add(data);
-            this.contained_data_probability_sum += data.probability;
-        }
-    }
-    public void update_contained_data_probability_sum(){
-        this.contained_data_probability_sum=0;
+    public void update_container(){
+        this.probability=0;
         foreach (Data_logic data in this.list_data_Logic) {
-            this.list_data_Logic.Add(data);
-            this.contained_data_probability_sum += data.probability;
+            this.probability += data.probability;
         }
     }
     public override void properties()
@@ -34,37 +28,42 @@ public abstract class Container : Data_logic{
             data_Logic.properties();
         }
     }
-
 }
 public abstract class Data_logic{
     [JsonProperty]
-    public List<Trait> traits = new List<Trait>{new Default_Trait()};
+    public List<Trait> traits;
     public int probability, added_probability;
-    [JsonProperty]
-    public static List<Data_logic> list_of_items = new List<Data_logic>();
-    public virtual void calculate_probablility(){
-        probability =0;
+    public Action calculate_probability;
+    public void calc_prob_add(){
+        this.probability =0;
         foreach (Trait trait in traits){
             probability += trait.probability();
         }
     }
+    public void calc_prob_mult(){
+        this.probability =0;
+        foreach (Trait trait in traits){
+            probability *= trait.probability();
+        }
+    }
     public Data_logic(){
-        this.calculate_probablility();
-        list_of_items.Add(this);
+        this.calculate_probability = this.calc_prob_mult;
+        this.calculate_probability();
     }
     public static void start(){
         init_debug_file();
-        new Default_Trait().fill_dictionary();
+        Trait default_trait = new Trait();
+        default_trait.probability = default_trait.prob_2nd_pow;
     }
     public virtual void properties(){
         foreach (Trait trait in traits){
-            Console.WriteLine(trait.trait_name + " linear probability: " + trait.linear_probability);
+            Console.WriteLine(" linear probability: " + trait.linear_probability);
         }
         Console.WriteLine("probability: " + probability);
         Console.WriteLine("added_probability: " + added_probability);
     }
     public bool excluded(){
-        calculate_probablility();
+        calculate_probability();
         if (this.probability == 0){
             return true;
         } else return false;
@@ -77,8 +76,9 @@ public abstract class Data_logic{
     //*************************************controlling
     //*************************************below
     //*************************************
-    public static async Task write_all_text_async(List<Data_logic> data, string to_file_name){
-        await File.WriteAllTextAsync(to_file_name, JsonConvert.SerializeObject(data, Formatting.Indented, new JsonSerializerSettings {
+    //writes all of a list to a file with path
+    public static async Task write_all_text_async(List<Data_logic> list_data_logic, string path){
+        await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(list_data_logic, Formatting.Indented, new JsonSerializerSettings {
             TypeNameHandling = TypeNameHandling.Auto
         }), default);
     }
@@ -92,21 +92,23 @@ public abstract class Data_logic{
         question.propeties();
     }
     */
+    //initiates a debug file
     public static void init_debug_file(){
         File.WriteAllText("debug_file.txt", "");
     }
-    public static List<Data_logic> Get_Data_Logics_list_from_file(string from){
-        var read = JsonConvert.DeserializeObject<List<Data_logic>>(File.ReadAllText(from), new JsonSerializerSettings {
-            TypeNameHandling = TypeNameHandling.Auto
-        });
-        return read;
+    public static List<Data_logic> Get_Data_Logics_list_from_file(string path){
+        List<Data_logic>? read;
+        try {
+            read = JsonConvert.DeserializeObject<List<Data_logic>>(File.ReadAllText(path), new JsonSerializerSettings {
+                TypeNameHandling = TypeNameHandling.Auto
+            });
+        }
+        catch{
+            throw new CouldNotLoadDataLogicListException("Could not find the Data_logic list your looking for");
+        }
+        return read!;
         //read in data
     }
-    /*
-    static void add_more_data(){
-        //add more data to the list opened??
-    }
-    */
     public static void update_added_probability(List<Data_logic> data){
         Data_logic.update_added_probability(data, 0);
     }
@@ -136,9 +138,9 @@ public abstract class Data_logic{
         //base case
         if (to-from<=1){
             if (random > data[from].added_probability){
-                return Data_logic.lower_data(data, from+1);
+                return Data_logic.lower_data(data, from+1, random);
             } else {
-                return Data_logic.lower_data(data, from);
+                return Data_logic.lower_data(data, from, random);
             }
         } else {
             if (random >= data[from+(to-from)/2].added_probability){
@@ -148,13 +150,19 @@ public abstract class Data_logic{
             }
         }
     }
-    public static Data_logic lower_data(List<Data_logic> data, int from){
+    
+    public static Data_logic lower_data(List<Data_logic> data, int from, int random){
         if (data[from].excluded()){
             if (from == 0){
-                return Data_logic.lower_data(data, data.Count-1);
-            } else return Data_logic.lower_data(data, from-1);
-        } else return data[from];
+                return Data_logic.lower_data(data, data.Count-1, random);
+            } else return Data_logic.lower_data(data, from-1, random);
+        } else {
+            if (data[from] is DLContainer){
+                return Data_logic.get_data_from_random(((DLContainer)data[from]).list_data_Logic, random);
+            } else return data[from];
+        }
     }
+    /*
     public static bool list_is_sum0(List<Data_logic> data){
         if (data[data.Count-1].added_probability==0)
             return true;
@@ -164,47 +172,100 @@ public abstract class Data_logic{
         for (int i = 0; i< data.Count; i++){
             if (data[i].excluded()){
                 data[i].traits[0].linear_probability = 1;
-                data[i].calculate_probablility();
+                data[i].calculate_probability();
             }
         }
     }
-}
-public class Default_Trait : Trait{
-    [JsonProperty]
-    public static Dictionary<int, int> dictionary = new Dictionary<int, int>();
-    public override string trait_name => "Default_Trait";
-    override public void fill_dictionary(){
-        for (int i =0; i<6; i++){
-            dictionary.Add(i, (int)Math.Pow(3, i));
-        }
-    }
-    override public int probability(){
-        if (linear_probability<0) return dictionary[0];
-        if (linear_probability>5) return dictionary[5];
-        try {
-            return dictionary[linear_probability];
-        } catch {
-            throw new DictionaryNotFilledException("fill the dictionary first with the Default_Trait.fill_dictionary() function or Data_Logic.start() function!");
-        }
-    }
-    public Default_Trait(){
-        this.linear_probability= 3;
-    }
+    */
 }
 [System.Serializable]
-public class DictionaryNotFilledException : System.Exception
+public class CouldNotLoadDataLogicListException : System.Exception
 {
-    public DictionaryNotFilledException() { }
-    public DictionaryNotFilledException(string message) : base(message) { }
-    public DictionaryNotFilledException(string message, System.Exception inner) : base(message, inner) { }
-    protected DictionaryNotFilledException(
+    public CouldNotLoadDataLogicListException() { }
+    public CouldNotLoadDataLogicListException(string message) : base(message) { }
+    public CouldNotLoadDataLogicListException(string message, System.Exception inner) : base(message, inner) { }
+    protected CouldNotLoadDataLogicListException(
         System.Runtime.Serialization.SerializationInfo info,
         System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 }
-public abstract class Trait{
+public class Trait{
     [JsonProperty]
-    public int linear_probability;
-    abstract public string trait_name{get;}
-    virtual public void fill_dictionary(){}
-    abstract public int probability();
+    public byte linear_probability=2;
+    [JsonProperty]
+    public Func<int> probability = () => 4;
+    [JsonConstructor]
+    public Trait(byte linear_probability){
+        this.linear_probability = linear_probability;
+    }
+    public Trait(){}
+    //linear_probability to probability function options
+    #region
+    public int prob_exp_2(){
+        return (int)Math.Pow(2, this.linear_probability);
+    }
+    public int prob_exp_3(){
+        return (int)Math.Pow(3, this.linear_probability);
+    }
+    public int prob_exp_4(){
+        return (int)Math.Pow(4, this.linear_probability);
+    }
+    public int prob_exp_5(){
+        return (int)Math.Pow(5, this.linear_probability);
+    }
+    public int prob_exp_6(){
+        return (int)Math.Pow(6, this.linear_probability);
+    }
+    public int prob_exp_7(){
+        return (int)Math.Pow(7, this.linear_probability);
+    }
+    public int prob_2nd_pow(){
+        return (int)Math.Pow(this.linear_probability, 2);
+    }
+    public int prob_3nd_pow(){
+        return (int)Math.Pow(this.linear_probability, 3);
+    }
+    public int prob_4nd_pow(){
+        return (int)Math.Pow(this.linear_probability, 4);
+    }
+    public int prob_5nd_pow(){
+        return (int)Math.Pow(this.linear_probability, 5);
+    }
+    public int prob_6nd_pow(){
+        return (int)Math.Pow(this.linear_probability, 6);
+    }
+    public int prob_7nd_pow(){
+        return (int)Math.Pow(this.linear_probability, 7);
+    }
+    #endregion
 }
+
+
+
+/*
+What is this? 
+data logics are data with wich you can give your data weights, these weights are then added and drawn from randomly.
+one data logic is selected and you can do whatever with it.
+
+what are containers?
+containers contain a list of data logic-s.
+their own fields are ocupied by the sum of the data they hold.
+you can't make children from the DLcontainer since they cant hold teir own weights.
+to compensate: the first data logic contained has the data of the container.
+this is a limitation set by my lazyness.
+
+
+- enter container
+- loop throw and find data logic
+ - if container start over
+- do stuff
+- sum up the container
+- sum up the rest
+
+
+
+excluded queue/stack/list:
+- ID system
+- - data logic has ID, IDs are in a dictionary each key's value is the contained data logic's ID (so mostly empty)
+- if the data logic is conteined then copy the full container list (up the tree veiw)
+- - if container exists near (if list then at all) => couple the data in the container (ORDER MATTERS)
+*/
