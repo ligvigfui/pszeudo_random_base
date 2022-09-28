@@ -1,3 +1,10 @@
-With this package you can create data with custom weights meaning: you can add some data with different weights and the data_logic class will take care of the weights for you. You can add multiple weights for each class. Weights are probability -es. they are a simple function where you can define the desired outcome as the probability from a linear version called linear_probability . define the relation in the Trait with a dictionary or some other way. each time you want to get a data point from your list_data_logic or list of data you can call the get_data_from_random . this returns a data_logic element from the list with the closest number of added_probabilites.
+With this package you can create data with custom weights meaning:
+You can add some data with different weights and the data_logic class will take care of the weights for you.
+You can add multiple weights for each class. Weights are probability -es.
+They are a simple function where you can define the desired outcome as the probability from a linear version called linear_probability.
+Create Trait objects at runtime and add them to your Data_Logic.
+Each time you want to get a data point from your list_data_logic or list of data you can call the get_data_from_random.
+This returns a data_logic element from the list with the closest number of added_probabilites.
 
-to start working with this library first create a class which extends data_logic or Container. then implement the calculation method, and add some of your custom data and your good to go.
+To start working with this library first create a class which extends data_logic or Container.
+Then implement the calculation method, and add some of your custom data and your good to go.
