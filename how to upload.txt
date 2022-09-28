@@ -1,0 +1,6 @@
+'couse I'm stupid
+increase the version number in "csproj"
+increase the version number in bat
+run bat
+go to nuget.org
+explain yourself wtf you did

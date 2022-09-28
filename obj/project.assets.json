@@ -51,13 +51,13 @@
     "C:\\Users\\ligvi\\.nuget\\packages\\": {}
   },
   "project": {
-    "version": "1.1.0",
+    "version": "2.0.0",
     "restore": {
-      "projectUniqueName": "C:\\programming\\c#\\pszeudo_random_base\\pszeudo_random_base.csproj",
+      "projectUniqueName": "c:\\programming\\c#\\pszeudo_random_base\\pszeudo_random_base.csproj",
       "projectName": "Pszeudo_random_base",
-      "projectPath": "C:\\programming\\c#\\pszeudo_random_base\\pszeudo_random_base.csproj",
+      "projectPath": "c:\\programming\\c#\\pszeudo_random_base\\pszeudo_random_base.csproj",
       "packagesPath": "C:\\Users\\ligvi\\.nuget\\packages\\",
-      "outputPath": "C:\\programming\\c#\\pszeudo_random_base\\obj\\",
+      "outputPath": "c:\\programming\\c#\\pszeudo_random_base\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ligvi\\AppData\\Roaming\\NuGet\\NuGet.Config",

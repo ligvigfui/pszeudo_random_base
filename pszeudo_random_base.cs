@@ -5,6 +5,8 @@ namespace pszeudo_random_base;
 
 public sealed class DLContainer : Data_logic{
     [JsonProperty]
+    public bool open = false;
+    [JsonProperty]
     public List<Data_logic> list_data_Logic = new List<Data_logic>();
     public DLContainer(params Data_logic[] data_logic){
         this.calculate_probability = update_container;
