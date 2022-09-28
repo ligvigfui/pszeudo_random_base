@@ -8,3 +8,5 @@ This returns a Data_Logic element from the list with the closest number of added
 
 To start working with this library first create a class which extends Data_Logic or DLContainer.
 Then implement the calculation method, and add some of your custom data and your good to go.
+
+Download it with: https://www.nuget.org/packages/Pszeudo_random_base/
